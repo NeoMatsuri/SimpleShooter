@@ -45,7 +45,10 @@ void ACover::OnCompBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	if (OtherActor->IsA<AShooterCharacter>())
 	{
-		//TODO: Inform the player that he is able to take cover
+		//Inform the player that he is able to take cover
+		AShooterCharacter* Char = Cast<AShooterCharacter>(OtherActor);
+		Char->SetCanTakeCover(true, this);
+		UE_LOG(LogTemp, Warning, TEXT("Works Fuck Head"));
 	}
 }
 
@@ -53,7 +56,12 @@ void ACover::OnCompEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 {
 	if (OtherActor->IsA<AShooterCharacter>())
 	{
-		//TODO: Inform the player that he isn't able to take cover
+		if (OtherActor->IsA<AShooterCharacter>())
+	{
+		//Inform the player that he isn't able to take cover
+		AShooterCharacter* Char = Cast<AShooterCharacter>(OtherActor);
+		Char->SetCanTakeCover(false,nullptr);
+	}
 	}
 }
 
@@ -112,18 +120,18 @@ void ACover::DetermineMovementDirection(FVector& MovementDirection, FRotator& Fa
 	//the movement direction
 	if (NearbySocket.IsEqual("ForwardSocket"))
 	{
-		MovementDirection = -GetActorRightVector();
+		MovementDirection = GetActorRightVector();
 		FacingDirection = GetActorRotation();
 	}
 	else if (NearbySocket.IsEqual("BackwardSocket"))
 	{
-		MovementDirection = GetActorRightVector();
-		FacingDirection = GetActorRotation() + FRotator(0, 180, 0);
+		MovementDirection = -GetActorForwardVector();
+		FacingDirection = GetActorRotation() + FRotator(0, -90, 0);
 	}
 	else if (NearbySocket.IsEqual("RightSocket"))
 	{
-		MovementDirection = GetActorForwardVector();
-		FacingDirection = GetActorRotation() + FRotator(0, 90, 0);
+		MovementDirection = GetActorRightVector();
+		FacingDirection = GetActorRotation() + FRotator(0, 180, 0);
 	}
 	else
 	{

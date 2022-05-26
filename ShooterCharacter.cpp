@@ -130,12 +130,43 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 
 void AShooterCharacter::MoveForward(float AxisValue)
 {
-	AddMovementInput(GetActorForwardVector() * AxisValue);
+	//We don't want to move forward or backwards when we're taking cover
+	if ((Controller != NULL) && (AxisValue != 0.0f) && !bIsInCover)
+	{
+		// find out which way is forward
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+ 
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, AxisValue);
+	}
+	//AddMovementInput(GetActorForwardVector() * AxisValue);
 }
 
 void AShooterCharacter::MoveSideways(float AxisValue)
 {
-	AddMovementInput(GetActorRightVector() * AxisValue);
+	if ((Controller != NULL) && (AxisValue != 0.0f))
+	{
+		if (!bIsInCover)
+		{
+			//default movement functionality
+ 
+			// find out which way is right
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+ 
+			// get right vector 
+			FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			AddMovementInput(Direction, AxisValue);
+		}
+		else
+		{
+			//Move according to the cover actor's position
+			AddMovementInput(CoverDirectionMovement, AxisValue);
+		}
+	}
+	//AddMovementInput(GetActorRightVector() * AxisValue);
 }
 
 void AShooterCharacter::LookUpRate(float AxisValue)

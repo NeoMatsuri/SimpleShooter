@@ -63,6 +63,8 @@ public:
 	void SetCanTakeCover(bool bCanTakeCover, ACover* CoverActor);
 private:
 
+
+
 	bool bCanTakeCover = false;
 
 	bool bIsInCover = false;
